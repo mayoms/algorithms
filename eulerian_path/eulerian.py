@@ -30,7 +30,7 @@ def find_leg(graph, start):
     if next != current:
       path.append(next)
       current = next
-    elif next == start and len(path) > 0:
+    elif next == start and len(path) > 1:
       graph.append(edge)
       break
     else:
@@ -47,13 +47,16 @@ def find_eulerian_tour(graph):
 
   path = []
   while graph:
-    leg, remainder = find_leg(graph, graph[-1][-1])
+    leg, graph = find_leg(graph, graph[-1][-1])
     if not path:
         path = leg
         continue
-    hook = set(leg) & set(path)        
-    pos = path.index(tuple(hook)[0])
-    path = path[:pos+1] + leg[1:] + path[pos+1:]
+    hook = tuple(set(leg) & set(path))[0]
+    if hook != leg[0]:
+      leg_pos = leg.index(hook)
+      leg = leg[leg_pos:] + leg[1:leg_pos+1]
+    path_pos = path.index(hook)
+    path = path[:path_pos] + leg + path[path_pos+1:]
          
   return path
 
@@ -62,7 +65,9 @@ def find_eulerian_tour(graph):
 graph = [(1, 2), (2, 3), (3, 1)]
 graph2 = [(0, 1), (1, 5), (1, 7), (4, 5), (4, 8), (1, 6), (3, 7), (5, 9), (2, 4), (0, 4), (2, 5), (3, 6), (8, 9)]
 graph3 = [(1, 13), (1, 6), (6, 11), (3, 13), (8, 13), (0, 6), (8, 9),(5, 9), (2, 6), (6, 10), (7, 9), (1, 12), (4, 12), (5, 14), (0, 1),  (2, 3), (4, 11), (6, 9), (7, 14),  (10, 13)]
+graph4 = [(8, 16), (8, 18), (16, 17), (18, 19), (3, 17), (13, 17), (5, 13),(3, 4), (0, 18), (3, 14), (11, 14), (1, 8), (1, 9), (4, 12), (2, 19),(1, 10), (7, 9), (13, 15), (6, 12), (0, 1), (2, 11), (3, 18), (5, 6), (7, 15), (8, 13), (10, 17)]
 
 print find_eulerian_tour(graph)
 print find_eulerian_tour(graph2)
 print find_eulerian_tour(graph3)
+print find_eulerian_tour(graph4)
